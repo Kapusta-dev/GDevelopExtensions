@@ -1,0 +1,1399 @@
+{
+  "author": "",
+  "category": "General",
+  "description": "Helps implement some missing scaling modes to get rid of artifacts and jitters on low res games:\n- KeepScaling = 1:1 Letterbox with upscaling\n- PixelScaling = 1:1 Letterbox without upscaling\n- IntegerScaling = Integer Letterbox with upscaling\n\nYou should only use one of these in your project.\nIncomplete with a few things still needing to be done manually. \nYou will probably need to thoroughly test and put in extra work on the extension if you are planning on using it in production.",
+  "extensionNamespace": "",
+  "fullName": "PixelScaling",
+  "helpPath": "",
+  "iconUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0ibWRpLW1vbml0b3Itc2NyZWVuc2hvdCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGQ9Ik05LDZINVYxMEg3VjhIOU0xOSwxMEgxN1YxMkgxNVYxNEgxOU0yMSwxNkgzVjRIMjFNMjEsMkgzQzEuODksMiAxLDIuODkgMSw0VjE2QTIsMiAwIDAsMCAzLDE4SDEwVjIwSDhWMjJIMTZWMjBIMTRWMThIMjFBMiwyIDAgMCwwIDIzLDE2VjRDMjMsMi44OSAyMi4xLDIgMjEsMiIgLz48L3N2Zz4=",
+  "name": "IntegerScaling",
+  "previewIconUrl": "https://resources.gdevelop-app.com/assets/Icons/monitor-screenshot.svg",
+  "shortDescription": "Helps implement some missing scaling modes.",
+  "version": "",
+  "tags": [
+    "Display",
+    "Resize",
+    "Scaling",
+    "Pixel"
+  ],
+  "authorIds": [],
+  "dependencies": [],
+  "eventsFunctions": [
+    {
+      "description": "Implements dynamic integer scaling for your game resolution to prevent tearing and other artifacts for pixel games.\nWorks for both portrait and landscape mode. \n\nThis also avoids scaling to where game elements are not inside of the display window as the default resize modes do, and margins are displayed instead.\n\nLIMITATIONS:\n- This only works on the base layer - Use the \"CopyCameraSettings\" extension to apply this for any additional camera layers.\n\nNOTES: \n- Target resolution width and height is the resolution that will be internally rendered until the game window is resized, at which point the resolution will also be proprotionally dynamically resized.\n- Note that camera zoom level is NOT dynamically changed, which means the layout viewing bounds will be different depending on the window size.\n          - use the 'KeepScaling' event if you want the game to look exactly the same regardless of window size\n          - the limitation there is that it will be scaled by whole integers only, leaving a lot of blank space depending on window size and project resolution\n\n- You can make the target resolution a multiple of your project properties and camera zoom to keep the width and height aesthetic you setup in project properties. For example:\n     Project properties W x H = 320 x 160\n     Zoom level = 3\n     Target W x H = 320*5 x 160*5 = 960x480\n\n- Zoom level and target resolution don't have to be at a multiple of the project properties resolution, feel free to play around and find what looks best for you.\n\n",
+      "fullName": "IntegerScaling",
+      "functionType": "Action",
+      "group": "",
+      "name": "IntegerScaling",
+      "private": false,
+      "sentence": "Configure resolution of _PARAM1_ x _PARAM2_ , with Zoom of _PARAM3_, and set window size to _PARAM4_ x _PARAM5_ - center window: _PARAM6_",
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "DepartScene"
+              },
+              "parameters": [
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetWindowSize"
+              },
+              "parameters": [
+                "",
+                "GetArgumentAsNumber(\"WindowSizeW\")",
+                "GetArgumentAsNumber(\"WindowSizeH\")",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetGameResolutionSize"
+              },
+              "parameters": [
+                "",
+                "GetArgumentAsNumber(\"TargetResW\")",
+                "GetArgumentAsNumber(\"TargetResH\")"
+              ]
+            },
+            {
+              "type": {
+                "value": "ZoomCamera"
+              },
+              "parameters": [
+                "",
+                "GetArgumentAsNumber(\"ZoomLevel\")",
+                "\"\"",
+                "0"
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "GetArgumentAsBoolean"
+                  },
+                  "parameters": [
+                    "\"CenterWindow\""
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "CenterWindow"
+                  },
+                  "parameters": [
+                    ""
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Square",
+          "comment2": ""
+        },
+        {
+          "folded": true,
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "GetArgumentAsNumber(\"TargetResW\")",
+                "=",
+                "GetArgumentAsNumber(\"TargetResH\")"
+              ]
+            }
+          ],
+          "actions": [],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "inverted": true,
+                    "value": "DepartScene"
+                  },
+                  "parameters": [
+                    ""
+                  ]
+                }
+              ],
+              "actions": [],
+              "events": [
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "BuiltinCommonInstructions::And"
+                      },
+                      "parameters": [],
+                      "subInstructions": [
+                        {
+                          "type": {
+                            "value": "BuiltinCommonInstructions::CompareNumbers"
+                          },
+                          "parameters": [
+                            "ScreenHeight()",
+                            ">=",
+                            "GetArgumentAsNumber(\"TargetResH\")"
+                          ]
+                        },
+                        {
+                          "type": {
+                            "value": "BuiltinCommonInstructions::CompareNumbers"
+                          },
+                          "parameters": [
+                            "ScreenWidth()",
+                            ">=",
+                            "GetArgumentAsNumber(\"TargetResW\")"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "ModVarScene"
+                      },
+                      "parameters": [
+                        "_IntegerScaling.TargetResH",
+                        "=",
+                        "GetArgumentAsNumber(\"TargetResH\")*floorTo(ScreenHeight()/GetArgumentAsNumber(\"TargetResH\"), 1)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "ModVarScene"
+                      },
+                      "parameters": [
+                        "_IntegerScaling.TargetResW",
+                        "=",
+                        "GetArgumentAsNumber(\"TargetResW\")*floorTo(ScreenHeight()/GetArgumentAsNumber(\"TargetResH\"), 1)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetGameResolutionSize"
+                      },
+                      "parameters": [
+                        "",
+                        "Variable(_IntegerScaling.TargetResW)",
+                        "Variable(_IntegerScaling.TargetResH)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetWindowMargins"
+                      },
+                      "parameters": [
+                        "",
+                        "(ScreenHeight()-Variable(_IntegerScaling.TargetResH))/2",
+                        "(ScreenWidth()-Variable(_IntegerScaling.TargetResW))/2",
+                        "(ScreenHeight()-Variable(_IntegerScaling.TargetResH))/2",
+                        "(ScreenWidth()-Variable(_IntegerScaling.TargetResW))/2"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "BuiltinCommonInstructions::Or"
+                      },
+                      "parameters": [],
+                      "subInstructions": [
+                        {
+                          "type": {
+                            "value": "BuiltinCommonInstructions::CompareNumbers"
+                          },
+                          "parameters": [
+                            "ScreenWidth()",
+                            "<",
+                            "SceneWindowWidth()"
+                          ]
+                        },
+                        {
+                          "type": {
+                            "value": "BuiltinCommonInstructions::CompareNumbers"
+                          },
+                          "parameters": [
+                            "ScreenHeight()",
+                            "<",
+                            "SceneWindowHeight()"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "ModVarScene"
+                      },
+                      "parameters": [
+                        "_IntegerScaling.TargetResH",
+                        "=",
+                        "GetArgumentAsNumber(\"TargetResH\")*floorTo(ScreenHeight()/GetArgumentAsNumber(\"TargetResH\"), 1)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "ModVarScene"
+                      },
+                      "parameters": [
+                        "_IntegerScaling.TargetResW",
+                        "=",
+                        "GetArgumentAsNumber(\"TargetResW\")*floorTo(ScreenHeight()/GetArgumentAsNumber(\"TargetResH\"), 1)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetGameResolutionSize"
+                      },
+                      "parameters": [
+                        "",
+                        "Variable(_IntegerScaling.TargetResW)",
+                        "Variable(_IntegerScaling.TargetResH)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetWindowMargins"
+                      },
+                      "parameters": [
+                        "",
+                        "(ScreenHeight()-Variable(_IntegerScaling.TargetResH))/2",
+                        "(ScreenWidth()-Variable(_IntegerScaling.TargetResW))/2",
+                        "(ScreenHeight()-Variable(_IntegerScaling.TargetResH))/2",
+                        "(ScreenWidth()-Variable(_IntegerScaling.TargetResW))/2"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Landscape",
+          "comment2": ""
+        },
+        {
+          "folded": true,
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "GetArgumentAsNumber(\"TargetResW\")",
+                ">",
+                "GetArgumentAsNumber(\"TargetResH\")"
+              ]
+            }
+          ],
+          "actions": [],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "inverted": true,
+                    "value": "DepartScene"
+                  },
+                  "parameters": [
+                    ""
+                  ]
+                }
+              ],
+              "actions": [],
+              "events": [
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "BuiltinCommonInstructions::CompareNumbers"
+                      },
+                      "parameters": [
+                        "ScreenHeight()",
+                        "!=",
+                        "GetArgumentAsNumber(\"TargetResH\")"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "BuiltinCommonInstructions::CompareNumbers"
+                      },
+                      "parameters": [
+                        "ScreenHeight()",
+                        "<",
+                        "ScreenWidth()"
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "ModVarScene"
+                      },
+                      "parameters": [
+                        "_IntegerScaling.TargetResH",
+                        "=",
+                        "GetArgumentAsNumber(\"TargetResH\")*floorTo(ScreenHeight()/GetArgumentAsNumber(\"TargetResH\"), 1)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "ModVarScene"
+                      },
+                      "parameters": [
+                        "_IntegerScaling.TargetResW",
+                        "=",
+                        "GetArgumentAsNumber(\"TargetResW\")*floorTo(ScreenHeight()/GetArgumentAsNumber(\"TargetResH\"), 1)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetGameResolutionSize"
+                      },
+                      "parameters": [
+                        "",
+                        "Variable(_IntegerScaling.TargetResW)",
+                        "Variable(_IntegerScaling.TargetResH)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetWindowMargins"
+                      },
+                      "parameters": [
+                        "",
+                        "(ScreenHeight()-Variable(_IntegerScaling.TargetResH))/2",
+                        "(ScreenWidth()-Variable(_IntegerScaling.TargetResW))/2",
+                        "(ScreenHeight()-Variable(_IntegerScaling.TargetResH))/2",
+                        "(ScreenWidth()-Variable(_IntegerScaling.TargetResW))/2"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "BuiltinCommonInstructions::Or"
+                      },
+                      "parameters": [],
+                      "subInstructions": [
+                        {
+                          "type": {
+                            "value": "BuiltinCommonInstructions::CompareNumbers"
+                          },
+                          "parameters": [
+                            "ScreenWidth()",
+                            "<",
+                            "SceneWindowWidth()"
+                          ]
+                        },
+                        {
+                          "type": {
+                            "value": "BuiltinCommonInstructions::CompareNumbers"
+                          },
+                          "parameters": [
+                            "ScreenWidth()",
+                            "<",
+                            "ScreenHeight()"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "ModVarScene"
+                      },
+                      "parameters": [
+                        "_IntegerScaling.TargetResW",
+                        "=",
+                        "GetArgumentAsNumber(\"TargetResW\")*floorTo(ScreenWidth()/GetArgumentAsNumber(\"TargetResW\"), 1)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "ModVarScene"
+                      },
+                      "parameters": [
+                        "_IntegerScaling.TargetResH",
+                        "=",
+                        "GetArgumentAsNumber(\"TargetResH\")*floorTo(ScreenWidth()/GetArgumentAsNumber(\"TargetResW\"), 1)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetGameResolutionSize"
+                      },
+                      "parameters": [
+                        "",
+                        "Variable(_IntegerScaling.TargetResW)",
+                        "Variable(_IntegerScaling.TargetResH)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetWindowMargins"
+                      },
+                      "parameters": [
+                        "",
+                        "(ScreenHeight()-Variable(_IntegerScaling.TargetResH))/2",
+                        "(ScreenWidth()-Variable(_IntegerScaling.TargetResW))/2",
+                        "(ScreenHeight()-Variable(_IntegerScaling.TargetResH))/2",
+                        "(ScreenWidth()-Variable(_IntegerScaling.TargetResW))/2"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Portrait",
+          "comment2": ""
+        },
+        {
+          "folded": true,
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "GetArgumentAsNumber(\"TargetResH\")",
+                ">",
+                "GetArgumentAsNumber(\"TargetResW\")"
+              ]
+            }
+          ],
+          "actions": [],
+          "events": [
+            {
+              "folded": true,
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "inverted": true,
+                    "value": "DepartScene"
+                  },
+                  "parameters": [
+                    ""
+                  ]
+                }
+              ],
+              "actions": [],
+              "events": [
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "BuiltinCommonInstructions::CompareNumbers"
+                      },
+                      "parameters": [
+                        "ScreenWidth()",
+                        "!=",
+                        "GetArgumentAsNumber(\"TargetResW\")"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "BuiltinCommonInstructions::CompareNumbers"
+                      },
+                      "parameters": [
+                        "ScreenWidth()",
+                        "<",
+                        "ScreenHeight()"
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "ModVarScene"
+                      },
+                      "parameters": [
+                        "_IntegerScaling.TargetResW",
+                        "=",
+                        "GetArgumentAsNumber(\"TargetResW\")*floorTo(ScreenWidth()/GetArgumentAsNumber(\"TargetResW\"), 1)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "ModVarScene"
+                      },
+                      "parameters": [
+                        "_IntegerScaling.TargetResH",
+                        "=",
+                        "GetArgumentAsNumber(\"TargetResH\")*floorTo(ScreenWidth()/GetArgumentAsNumber(\"TargetResW\"), 1)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetGameResolutionSize"
+                      },
+                      "parameters": [
+                        "",
+                        "Variable(_IntegerScaling.TargetResW)",
+                        "Variable(_IntegerScaling.TargetResH)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetWindowMargins"
+                      },
+                      "parameters": [
+                        "",
+                        "(ScreenHeight()-Variable(_IntegerScaling.TargetResH))/2",
+                        "(ScreenWidth()-Variable(_IntegerScaling.TargetResW))/2",
+                        "(ScreenHeight()-Variable(_IntegerScaling.TargetResH))/2",
+                        "(ScreenWidth()-Variable(_IntegerScaling.TargetResW))/2"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "BuiltinCommonInstructions::Or"
+                      },
+                      "parameters": [],
+                      "subInstructions": [
+                        {
+                          "type": {
+                            "value": "BuiltinCommonInstructions::CompareNumbers"
+                          },
+                          "parameters": [
+                            "ScreenHeight()",
+                            "<",
+                            "SceneWindowHeight()"
+                          ]
+                        },
+                        {
+                          "type": {
+                            "value": "BuiltinCommonInstructions::CompareNumbers"
+                          },
+                          "parameters": [
+                            "ScreenHeight()",
+                            "<",
+                            "ScreenWidth()"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "ModVarScene"
+                      },
+                      "parameters": [
+                        "_IntegerScaling.TargetResH",
+                        "=",
+                        "GetArgumentAsNumber(\"TargetResH\")*floorTo(ScreenHeight()/GetArgumentAsNumber(\"TargetResH\"), 1)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "ModVarScene"
+                      },
+                      "parameters": [
+                        "_IntegerScaling.TargetResW",
+                        "=",
+                        "GetArgumentAsNumber(\"TargetResW\")*floorTo(ScreenHeight()/GetArgumentAsNumber(\"TargetResH\"), 1)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetGameResolutionSize"
+                      },
+                      "parameters": [
+                        "",
+                        "Variable(_IntegerScaling.TargetResW)",
+                        "Variable(_IntegerScaling.TargetResH)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetWindowMargins"
+                      },
+                      "parameters": [
+                        "",
+                        "(ScreenHeight()-Variable(_IntegerScaling.TargetResH))/2",
+                        "(ScreenWidth()-Variable(_IntegerScaling.TargetResW))/2",
+                        "(ScreenHeight()-Variable(_IntegerScaling.TargetResH))/2",
+                        "(ScreenWidth()-Variable(_IntegerScaling.TargetResW))/2"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "parameters": [
+        {
+          "codeOnly": false,
+          "defaultValue": "",
+          "description": "Target resolution Width you'd like your game to run at",
+          "longDescription": "",
+          "name": "TargetResW",
+          "optional": false,
+          "supplementaryInformation": "",
+          "type": "expression"
+        },
+        {
+          "codeOnly": false,
+          "defaultValue": "",
+          "description": "Target resolution Height you'd like your game to run at",
+          "longDescription": "",
+          "name": "TargetResH",
+          "optional": false,
+          "supplementaryInformation": "",
+          "type": "expression"
+        },
+        {
+          "codeOnly": false,
+          "defaultValue": "",
+          "description": "How much to zoom the camera after re-scaling to the target resolution",
+          "longDescription": "",
+          "name": "ZoomLevel",
+          "optional": false,
+          "supplementaryInformation": "",
+          "type": "expression"
+        },
+        {
+          "codeOnly": false,
+          "defaultValue": "",
+          "description": "The starting window Width size",
+          "longDescription": "",
+          "name": "WindowSizeW",
+          "optional": false,
+          "supplementaryInformation": "",
+          "type": "expression"
+        },
+        {
+          "codeOnly": false,
+          "defaultValue": "",
+          "description": "The starting window Height size",
+          "longDescription": "",
+          "name": "WindowSizeH",
+          "optional": false,
+          "supplementaryInformation": "",
+          "type": "expression"
+        },
+        {
+          "codeOnly": false,
+          "defaultValue": "yes",
+          "description": "Whether to center the game window on the screen",
+          "longDescription": "",
+          "name": "CenterWindow",
+          "optional": true,
+          "supplementaryInformation": "",
+          "type": "yesorno"
+        }
+      ],
+      "objectGroups": []
+    },
+    {
+      "description": "Implements 1:1 integer scaling for your game resolution to prevent tearing and other artifacts for pixel games.\nWorks for both portrait and landscape mode. \n\nThis also avoids scaling to where game elements are not inside of the display window as the default resize modes do, and margins are displayed instead.\n\nLIMITATIONS:\n- This only works on the base layer - Use the \"CopyCameraSettings\" extension to apply this for any additional camera layers.\n- Because we are keeping 1:1 ratio here you CANNOT go below what you put in as TargetResW and TargetResH - those are your minimum game resolutions.\n\n\nNOTES: \n- Target resolution width and height is the resolution that will be internally rendered until the game window is resized, at which point the resolution will also be dynamically resized but keep the 1:1 pixel ratio.\n- Note that layout viewing bounds will be different depending on the window size.\n          - use the 'PixelScaling' event if you want 1:1 scaling without upscaling the base resolution\n          - the limitation there is that things may get jittery at low resolutions and pixel snapping is recommended\n\n- You can make the target resolution a multiple of your project properties and camera zoom to keep the width and height aesthetic you setup in project properties. For example:\n     Project properties W x H = 320 x 160\n     Zoom level = 3\n     Target W x H = 320*5 x 160*5 = 960x480\n\n- Zoom level and target resolution don't have to be at a multiple of the project properties resolution, feel free to play around and find what looks best for you.\n\n",
+      "fullName": "KeepScaling",
+      "functionType": "Action",
+      "group": "",
+      "name": "KeepScaling",
+      "private": false,
+      "sentence": "Keep resolution of _PARAM1_ x _PARAM2_ , with Zoom of _PARAM3_, and set window size to _PARAM4_ x _PARAM5_ - center window: _PARAM6_",
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "DepartScene"
+              },
+              "parameters": [
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetWindowSize"
+              },
+              "parameters": [
+                "",
+                "GetArgumentAsNumber(\"WindowSizeW\")",
+                "GetArgumentAsNumber(\"WindowSizeH\")",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetGameResolutionSize"
+              },
+              "parameters": [
+                "",
+                "GetArgumentAsNumber(\"TargetResW\")",
+                "GetArgumentAsNumber(\"TargetResH\")"
+              ]
+            },
+            {
+              "type": {
+                "value": "ZoomCamera"
+              },
+              "parameters": [
+                "",
+                "GetArgumentAsNumber(\"ZoomLevel\")",
+                "\"\"",
+                "0"
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "GetArgumentAsBoolean"
+                  },
+                  "parameters": [
+                    "\"CenterWindow\""
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "CenterWindow"
+                  },
+                  "parameters": [
+                    ""
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [],
+              "actions": [
+                {
+                  "type": {
+                    "value": "ModVarScene"
+                  },
+                  "parameters": [
+                    "_KeepScaling.TargetW",
+                    "=",
+                    "GetArgumentAsNumber(\"TargetResW\")"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ModVarScene"
+                  },
+                  "parameters": [
+                    "_KeepScaling.TargetH",
+                    "=",
+                    "GetArgumentAsNumber(\"TargetResH\")"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ModVarScene"
+                  },
+                  "parameters": [
+                    "_KeepScaling.Zoom",
+                    "=",
+                    "GetArgumentAsNumber(\"ZoomLevel\")"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "ScreenHeight()",
+                ">=",
+                "Variable(_KeepScaling.TargetH)+GetArgumentAsNumber(\"TargetResH\")"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "ScreenWidth()",
+                ">=",
+                "Variable(_KeepScaling.TargetW)+GetArgumentAsNumber(\"TargetResW\")"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetGameResolutionSize"
+              },
+              "parameters": [
+                "",
+                "Variable(_KeepScaling.TargetW)+GetArgumentAsNumber(\"TargetResW\")",
+                "Variable(_KeepScaling.TargetH)+GetArgumentAsNumber(\"TargetResH\")"
+              ]
+            },
+            {
+              "type": {
+                "value": "ModVarScene"
+              },
+              "parameters": [
+                "_KeepScaling.TargetW",
+                "=",
+                "Variable(_KeepScaling.TargetW)+GetArgumentAsNumber(\"TargetResW\")"
+              ]
+            },
+            {
+              "type": {
+                "value": "ModVarScene"
+              },
+              "parameters": [
+                "_KeepScaling.TargetH",
+                "=",
+                "Variable(_KeepScaling.TargetH)+GetArgumentAsNumber(\"TargetResH\")"
+              ]
+            },
+            {
+              "type": {
+                "value": "ModVarScene"
+              },
+              "parameters": [
+                "_KeepScaling.Zoom",
+                "=",
+                "Variable(_KeepScaling.Zoom)+1"
+              ]
+            },
+            {
+              "type": {
+                "value": "ZoomCamera"
+              },
+              "parameters": [
+                "",
+                "Variable(_KeepScaling.Zoom)",
+                "\"\"",
+                "0"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Or"
+              },
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "value": "BuiltinCommonInstructions::CompareNumbers"
+                  },
+                  "parameters": [
+                    "ScreenHeight()",
+                    "<",
+                    "SceneWindowHeight()"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BuiltinCommonInstructions::CompareNumbers"
+                  },
+                  "parameters": [
+                    "ScreenWidth()",
+                    "<",
+                    "SceneWindowWidth()"
+                  ]
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetGameResolutionSize"
+              },
+              "parameters": [
+                "",
+                "Variable(_KeepScaling.TargetW)-GetArgumentAsNumber(\"TargetResW\")",
+                "Variable(_KeepScaling.TargetH)-GetArgumentAsNumber(\"TargetResH\")"
+              ]
+            },
+            {
+              "type": {
+                "value": "ModVarScene"
+              },
+              "parameters": [
+                "_KeepScaling.TargetW",
+                "=",
+                "Variable(_KeepScaling.TargetW)-GetArgumentAsNumber(\"TargetResW\")"
+              ]
+            },
+            {
+              "type": {
+                "value": "ModVarScene"
+              },
+              "parameters": [
+                "_KeepScaling.TargetH",
+                "=",
+                "Variable(_KeepScaling.TargetH)-GetArgumentAsNumber(\"TargetResH\")"
+              ]
+            },
+            {
+              "type": {
+                "value": "ModVarScene"
+              },
+              "parameters": [
+                "_KeepScaling.Zoom",
+                "=",
+                "Variable(_KeepScaling.Zoom)-1"
+              ]
+            },
+            {
+              "type": {
+                "value": "ZoomCamera"
+              },
+              "parameters": [
+                "",
+                "Variable(_KeepScaling.Zoom)",
+                "\"\"",
+                "0"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [],
+          "actions": [
+            {
+              "type": {
+                "value": "SetWindowMargins"
+              },
+              "parameters": [
+                "",
+                "(ScreenHeight()-Variable(_KeepScaling.TargetH))/2",
+                "(ScreenWidth()-Variable(_KeepScaling.TargetW))/2",
+                "(ScreenHeight()-Variable(_KeepScaling.TargetH))/2",
+                "(ScreenWidth()-Variable(_KeepScaling.TargetW))/2"
+              ]
+            }
+          ]
+        }
+      ],
+      "parameters": [
+        {
+          "codeOnly": false,
+          "defaultValue": "",
+          "description": "Target resolution Width you'd like your game to run at",
+          "longDescription": "",
+          "name": "TargetResW",
+          "optional": false,
+          "supplementaryInformation": "",
+          "type": "expression"
+        },
+        {
+          "codeOnly": false,
+          "defaultValue": "",
+          "description": "Target resolution Height you'd like your game to run at",
+          "longDescription": "",
+          "name": "TargetResH",
+          "optional": false,
+          "supplementaryInformation": "",
+          "type": "expression"
+        },
+        {
+          "codeOnly": false,
+          "defaultValue": "",
+          "description": "How much to zoom the camera after re-scaling to the target resolution",
+          "longDescription": "",
+          "name": "ZoomLevel",
+          "optional": false,
+          "supplementaryInformation": "",
+          "type": "expression"
+        },
+        {
+          "codeOnly": false,
+          "defaultValue": "",
+          "description": "The starting window Width size",
+          "longDescription": "",
+          "name": "WindowSizeW",
+          "optional": false,
+          "supplementaryInformation": "",
+          "type": "expression"
+        },
+        {
+          "codeOnly": false,
+          "defaultValue": "",
+          "description": "The starting window Height size",
+          "longDescription": "",
+          "name": "WindowSizeH",
+          "optional": false,
+          "supplementaryInformation": "",
+          "type": "expression"
+        },
+        {
+          "codeOnly": false,
+          "defaultValue": "yes",
+          "description": "Whether to center the game window on the screen",
+          "longDescription": "",
+          "name": "CenterWindow",
+          "optional": true,
+          "supplementaryInformation": "",
+          "type": "yesorno"
+        }
+      ],
+      "objectGroups": []
+    },
+    {
+      "description": "Implements 1:1 integer scaling for your game resolution to prevent tearing and other artifacts for pixel games.\nWorks for both portrait and landscape mode.\n\nNo upscaling is done so pixel snapping is highly recommended. You will have jitters with Camera movement if you don't do your own pixel rounding on it.\nProvides an 'old-school' pixel game aesthetic.\n\nThis also avoids scaling to where game elements are not inside of the display window as the default resize modes do, and margins are displayed instead.\n\n\nNOTES: \n- Target resolution width and height is the resolution that will be internally rendered until the game window is resized, at which point the game will also be resized, keeping the 1:1 pixel ratio and not performing any upscaling.\n          - use the 'KeepScaling' or 'IntegerScaling' events if you want to upscale the base resolution when the window is resized\n\n- Set the target resolution to what you would normally setup in project properties.\n\n",
+      "fullName": "PixelScaling",
+      "functionType": "Action",
+      "group": "",
+      "name": "PixelScaling",
+      "private": false,
+      "sentence": "Keep resolution of _PARAM1_ x _PARAM2_ , and set window size to _PARAM3_ x _PARAM4_ - center window: _PARAM5_",
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "DepartScene"
+              },
+              "parameters": [
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetWindowSize"
+              },
+              "parameters": [
+                "",
+                "GetArgumentAsNumber(\"WindowSizeW\")",
+                "GetArgumentAsNumber(\"WindowSizeH\")",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetGameResolutionSize"
+              },
+              "parameters": [
+                "",
+                "GetArgumentAsNumber(\"TargetResW\")",
+                "GetArgumentAsNumber(\"TargetResH\")"
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "GetArgumentAsBoolean"
+                  },
+                  "parameters": [
+                    "\"CenterWindow\""
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "CenterWindow"
+                  },
+                  "parameters": [
+                    ""
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [],
+              "actions": [
+                {
+                  "type": {
+                    "value": "ModVarScene"
+                  },
+                  "parameters": [
+                    "_PixelScaling.TargetW",
+                    "=",
+                    "GetArgumentAsNumber(\"TargetResW\")"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ModVarScene"
+                  },
+                  "parameters": [
+                    "_PixelScaling.TargetH",
+                    "=",
+                    "GetArgumentAsNumber(\"TargetResH\")"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "ScreenHeight()",
+                ">=",
+                "Variable(_PixelScaling.TargetH)+GetArgumentAsNumber(\"TargetResH\")"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "ScreenWidth()",
+                ">=",
+                "Variable(_PixelScaling.TargetW)+GetArgumentAsNumber(\"TargetResW\")"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "ModVarScene"
+              },
+              "parameters": [
+                "_PixelScaling.TargetW",
+                "=",
+                "Variable(_PixelScaling.TargetW)+GetArgumentAsNumber(\"TargetResW\")"
+              ]
+            },
+            {
+              "type": {
+                "value": "ModVarScene"
+              },
+              "parameters": [
+                "_PixelScaling.TargetH",
+                "=",
+                "Variable(_PixelScaling.TargetH)+GetArgumentAsNumber(\"TargetResH\")"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Or"
+              },
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "value": "BuiltinCommonInstructions::CompareNumbers"
+                  },
+                  "parameters": [
+                    "ScreenHeight()",
+                    "<",
+                    "Variable(_PixelScaling.TargetH)"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BuiltinCommonInstructions::CompareNumbers"
+                  },
+                  "parameters": [
+                    "ScreenWidth()",
+                    "<",
+                    "Variable(_PixelScaling.TargetW)"
+                  ]
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "ModVarScene"
+              },
+              "parameters": [
+                "_PixelScaling.TargetW",
+                "=",
+                "Variable(_PixelScaling.TargetW)-GetArgumentAsNumber(\"TargetResW\")"
+              ]
+            },
+            {
+              "type": {
+                "value": "ModVarScene"
+              },
+              "parameters": [
+                "_PixelScaling.TargetH",
+                "=",
+                "Variable(_PixelScaling.TargetH)-GetArgumentAsNumber(\"TargetResH\")"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [],
+          "actions": [
+            {
+              "type": {
+                "value": "SetWindowMargins"
+              },
+              "parameters": [
+                "",
+                "(ScreenHeight()-Variable(_PixelScaling.TargetH))/2",
+                "(ScreenWidth()-Variable(_PixelScaling.TargetW))/2",
+                "(ScreenHeight()-Variable(_PixelScaling.TargetH))/2",
+                "(ScreenWidth()-Variable(_PixelScaling.TargetW))/2"
+              ]
+            }
+          ]
+        }
+      ],
+      "parameters": [
+        {
+          "codeOnly": false,
+          "defaultValue": "",
+          "description": "Target resolution Width you'd like your game to run at",
+          "longDescription": "",
+          "name": "TargetResW",
+          "optional": false,
+          "supplementaryInformation": "",
+          "type": "expression"
+        },
+        {
+          "codeOnly": false,
+          "defaultValue": "",
+          "description": "Target resolution Height you'd like your game to run at",
+          "longDescription": "",
+          "name": "TargetResH",
+          "optional": false,
+          "supplementaryInformation": "",
+          "type": "expression"
+        },
+        {
+          "codeOnly": false,
+          "defaultValue": "",
+          "description": "The starting window Width size",
+          "longDescription": "",
+          "name": "WindowSizeW",
+          "optional": false,
+          "supplementaryInformation": "",
+          "type": "expression"
+        },
+        {
+          "codeOnly": false,
+          "defaultValue": "",
+          "description": "The starting window Height size",
+          "longDescription": "",
+          "name": "WindowSizeH",
+          "optional": false,
+          "supplementaryInformation": "",
+          "type": "expression"
+        },
+        {
+          "codeOnly": false,
+          "defaultValue": "yes",
+          "description": "Whether to center the game window on the screen",
+          "longDescription": "",
+          "name": "CenterWindow",
+          "optional": true,
+          "supplementaryInformation": "",
+          "type": "yesorno"
+        }
+      ],
+      "objectGroups": []
+    }
+  ],
+  "eventsBasedBehaviors": []
+}
